@@ -1,8 +1,18 @@
-import express from "express";
+import express, { json } from "express";
 import { appRouter } from "./app/routes";
+import { errorHandler } from "./app/middlewares/error-handler";
+import { NotFoundError } from "./app/errors";
 
 const app = express();
 
+app.use(json());
+
 app.use("/api/v1", appRouter);
 
-export default app
+app.all("*", () => {
+  throw new NotFoundError();
+});
+
+app.use(errorHandler);
+
+export default app;
