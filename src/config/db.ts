@@ -21,7 +21,7 @@ const connectDB = async () => {
 
 const syncDB = async () => {
   try {
-    await sequelize.sync({ force: true }); // Set force: true for development to reset tables
+    await sequelize.sync({ force: false }); // Set force: true for development to reset tables
     console.log("Database synced successfully!");
   } catch (error) {
     console.error("Error syncing database:", error);

@@ -8,7 +8,6 @@ export abstract class CustomError extends Error {
 
     // this should implement all classes
     abstract serializeErrors(): {
-        code: string;
         message: string;
         details?: any;
     };
