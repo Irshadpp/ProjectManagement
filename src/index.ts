@@ -1,13 +1,12 @@
 import "dotenv/config"
-import express from "express";
 import app from "./app";
-import { connectDB } from "./config/db";
+import { connectDB, syncDB } from "./config/db";
 
 const port = process.env.PORT || 3000;
 
 const start = async () => {
     await connectDB();
-    // await syncDB();  
+    await syncDB();  
   };
   
   start();
