@@ -1,4 +1,5 @@
 import { User } from "../models";
+import { UserCreationAttributes } from "../models/User";
 import { IUserService } from "./user.services.interface";
 
 export class UserService implements IUserService {
@@ -6,7 +7,7 @@ export class UserService implements IUserService {
     return User.findOne({ where: { email } });
   }
 
-  async createUser(userData: Partial<User>): Promise<User> {
+  async createUser(userData: UserCreationAttributes): Promise<User> {
     return User.create(userData);
   }
 

@@ -4,9 +4,12 @@ import { requireAuth } from "../middlewares/require-auth";
 import { createProjectValidator } from "../validators/create-project.validator";
 import { validateRequest } from "../middlewares/validate-request";
 import {
+  assignUserToProject,
   createProject,
+  deleteProject,
   editProject,
   fetchAllProjects,
+  fetchProject,
 } from "../controllers/project.controller";
 import { editProjectValidator } from "../validators/edit-project.validator";
 import { authorizeProjectOwner } from "../middlewares/authorize-project-owner";
@@ -29,9 +32,14 @@ router.patch(
   validateRequest,
   editProject
 );
-router.get("/:projectId");
-router.delete("/:projectId");
-router.post("/:projectId/assign-user");
+router.get("/:projectId", requireAuth, fetchProject);
+router.delete("/:projectId", requireAuth, authorizeProjectOwner, deleteProject);
+router.patch(
+  "/:projectId/assign-user",
+  requireAuth,
+  authorizeProjectOwner,
+  assignUserToProject
+);
 
 //Nesting taskRouter under projectRouter for tasks related to a specific project
 router.use("/:projectId/task", taskRouter);
