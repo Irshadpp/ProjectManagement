@@ -10,7 +10,6 @@ export class RequestValidationError extends CustomError {
 
     serializeErrors() {
         return {
-            code: "VALIDATION_ERROR",
             message: "Request validation failed.",
             details: this.errors
         };
