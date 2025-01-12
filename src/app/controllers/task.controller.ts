@@ -42,7 +42,7 @@ export const fetchTasksByProject = async (
       throw new BadRequestError("Invalid or missing Project ID");
     }
     const tasks = await taskService.findTasksByProject(projectIdNum);
-    sendResponse(res, HttpStatusCode.OK, "Task fetched Successfully", tasks);
+    sendResponse(res, HttpStatusCode.OK, "Tasks fetched Successfully", tasks);
   } catch (error) {
     console.log(error);
     next(error);
@@ -85,6 +85,28 @@ export const deleteTask = async (
       }
       await taskService.deleteTaskById(taskIdNum);
       sendResponse(res, HttpStatusCode.OK, "Task deleted Successfully");
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  export const fetchTask = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { taskId } = req.params;
+      const taskIdNum = Number(taskId);
+      if (!taskIdNum || !Number.isInteger(taskIdNum)) {
+        throw new BadRequestError("Invalid or missing Task ID");
+      }
+      const task = await taskService.findTaskById(taskIdNum);
+      if(!task){
+        throw new NotFoundError("Task not found!")
+      }
+      sendResponse(res, HttpStatusCode.OK, "Task fetched Successfully", task);
     } catch (error) {
       console.log(error);
       next(error);
