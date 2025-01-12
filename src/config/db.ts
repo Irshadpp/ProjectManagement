@@ -1,13 +1,25 @@
 import { Sequelize } from "sequelize";
 
-const sequelize = new Sequelize({
-  dialect: "postgres",
-  host: process.env.DATABASE_HOST,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
+const sequelize = new Sequelize(process.env.DATABASE_URL || '', {
+  dialect: 'postgres',
+  dialectOptions: {
+    ssl: {
+      require: true, // Required for Render-hosted PostgreSQL
+      rejectUnauthorized: false, // Necessary for some SSL certificates
+    },
+  },
   logging: false,
-});
+}
+)
+
+// const sequelize = new Sequelize({
+//   dialect: "postgres",
+//   host: process.env.DATABASE_HOST,
+//   username: process.env.DATABASE_USERNAME,
+//   password: process.env.DATABASE_PASSWORD,
+//   database: process.env.DATABASE_NAME,
+//   logging: false,
+// });
 
 const connectDB = async () => {
   try {
