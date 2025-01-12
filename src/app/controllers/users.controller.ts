@@ -88,7 +88,6 @@ export const editUser =  async (
 ) => {
   try {
     const {userId} = req.params
-    console.log(userId)
     const id = Number(userId);
     if (!id || !Number.isInteger(id)) {
       throw new BadRequestError("Invalid or missing User ID");
