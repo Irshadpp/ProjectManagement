@@ -3,6 +3,7 @@ import { sequelize } from "../../config/db";
 
 class Task extends Model {
   id!: number;
+  name!: string;
   description!: string;
   status!: string;
   projectId!: number;
@@ -15,10 +16,18 @@ Task.init(
       autoIncrement: true,
       primaryKey: true,
     },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     status: {
       type: DataTypes.ENUM("To Do", "In Progress", "Done"),
       allowNull: false,
       defaultValue: "To Do",
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     projectId: {
       type: DataTypes.INTEGER,
