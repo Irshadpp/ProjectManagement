@@ -1,14 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import userService from "../services/user.service";
-import { BadRequestError, NotFoundError } from "../errors";
+import { BadRequestError, ForbiddenError, NotAuthorizedError, NotFoundError } from "../errors";
 import Password from "../utils/password";
 import {
   generateJwtAccessToken,
   generateJwtRefreshToken,
   JWTUserPayload,
+  verifyJwt,
 } from "../utils/jwt";
 import { setCookie } from "../utils/cookie-utils";
-import { HttpStatusCode, sendResponse } from "../utils/send-response";
+import { CommonMessages, HttpStatusCode, sendResponse } from "../utils/send-response";
 
 export const createUser = async (
   req: Request,
@@ -115,3 +116,35 @@ export const editUser =  async (
     next(error);
   }
 }
+
+export const newToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      throw new NotAuthorizedError();
+    }
+
+    const refreshSecret = process.env.JWT_REFRESH_SECRET;
+    const user = verifyJwt(refreshToken, refreshSecret!) as JWTUserPayload;
+    if (!user) {
+      throw new ForbiddenError();
+    }
+    const payload: JWTUserPayload = {
+      id: user.id,
+      email: user.email,
+    };
+    const accessSecret = process.env.JWT_ACCESS_SECRET;
+    const newAccessToken = generateJwtAccessToken(payload, accessSecret!);
+
+    setCookie(res, "accessToken", newAccessToken, { maxAge: 30 * 60 * 1000 });
+
+    sendResponse(res, HttpStatusCode.OK, CommonMessages.SUCCESS, { accessToken: newAccessToken });
+  } catch (error) {
+    console.log("Error in new token", error);
+    next(error);
+  }
+};
