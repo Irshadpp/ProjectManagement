@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import userService from "../services/user.service";
-import { BadRequestError } from "../errors";
+import { BadRequestError, NotFoundError } from "../errors";
 import Password from "../utils/password";
 import {
   generateJwtAccessToken,
@@ -80,3 +80,39 @@ export const loginUser = async (
     next(error);
   }
 };
+
+export const editUser =  async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {userId} = req.params
+    console.log(userId)
+    const id = Number(userId);
+    if (!id || !Number.isInteger(id)) {
+      throw new BadRequestError("Invalid or missing User ID");
+    }
+    
+    const user = await userService.findUserById(id);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    
+    const {email} = req.body;
+
+    const existingUser = await userService.findUserByEmail(email);
+    if(existingUser && user.email !== existingUser?.email){
+      throw new BadRequestError("Email already exists")
+    }
+
+    const updateData: Partial<{ email: string;}> = {};
+    if (email) updateData.email = email;
+
+    const updatedUser = await userService.updateUserById(id, updateData);
+    sendResponse(res, HttpStatusCode.OK, "Updated user successfully", {id:updatedUser?.id, email: updatedUser?.email})
+
+  } catch (error) {
+    next(error);
+  }
+}

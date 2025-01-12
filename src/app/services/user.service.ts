@@ -10,6 +10,15 @@ export class UserService implements IUserService {
     return User.create(userData);
   }
 
+  async updateUserById(
+    id: number,
+    updateData: Partial<User>
+  ): Promise<User | null> {
+    const user = await User.findByPk(id);
+    await user!.update(updateData);
+    return user;
+  }
+
   async findUserById(id: number): Promise<User | null> {
     return User.findByPk(id);
   }

@@ -2,10 +2,12 @@ import express, { json } from "express";
 import { appRouter } from "./app/routes";
 import { errorHandler } from "./app/middlewares/error-handler";
 import { NotFoundError } from "./app/errors";
+import cookieParser from "cookie-parser"
 
 const app = express();
 
 app.use(json());
+app.use(cookieParser());
 
 app.use("/api/v1", appRouter);
 
