@@ -5,8 +5,18 @@ import { NotFoundError } from "./app/errors";
 import cookieParser from "cookie-parser"
 import morgan from "morgan"
 import rateLimit from "express-rate-limit";
+import cors from "cors"
 
 const app = express();
+
+const corsOptions = {
+  origin: "*", 
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"], 
+  credentials: true, 
+};
+
+app.use(cors(corsOptions));
 
 app.use(json());
 app.use(cookieParser());
